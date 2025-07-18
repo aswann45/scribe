@@ -1,0 +1,8 @@
+templates:
+- name: talking_points
+  options:
+    date_format: null
+    richtext: {}
+    uppercase_names: false
+  output_naming: talking_points.docx
+  path: /home/aswann/scribe/templates/talking_points.docx

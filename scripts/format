@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")"/../
+
+echo "Checking app..."
+ruff check scribe --select I --fix
+ruff format scribe
+
+echo "Checking tests..."
+ruff check tests --select I --fix
+ruff format tests
+
+echo "Formatting checks done!"

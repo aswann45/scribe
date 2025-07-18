@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")"/../
+
+echo "Runnning mypy checks..."
+mypy scribe
+
+echo "Running vulture checks..."
+vulture scribe
+
+echo "Runnning ruff checks..."
+ruff check scribe --ignore ERA001 --ignore FIX002
+# ruff check app
+ruff format scribe --check
+
+echo "Linting checks done!"
