@@ -34,6 +34,7 @@ import json
 import logging
 import os
 import sys
+from contextvars import ContextVar
 from datetime import UTC, datetime
 from typing import Any, Final
 
@@ -207,9 +208,14 @@ def setup(level: str | int = "INFO", json_mode: bool | None = None) -> None:
     factory = logging.getLogRecordFactory()
 
     def record_factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
-        record = factory(*args, **kwargs)  # type: ignore[arg-type]
-        record.template = getattr(_CTX, "template", None)
-        record.output = getattr(_CTX, "output", None)
+        record = factory(*args, **kwargs)
+        try:
+            ctx = _CTX.get()
+            record.template = ctx.template
+            record.output = ctx.output
+        except LookupError:  # no context active
+            record.template = None
+            record.output = None
         return record
 
     logging.setLogRecordFactory(record_factory)
@@ -242,7 +248,7 @@ class _Context:
     output: str | None
 
 
-_CTX = _Context()
+_CTX: ContextVar[_Context] = ContextVar("_CTX")
 
 
 class render_context:  # noqa: N801
@@ -265,8 +271,10 @@ class render_context:  # noqa: N801
     """
 
     def __init__(self, template: str, output: str) -> None:
-        _CTX.template = template
-        _CTX.output = output
+        self._ctx = _Context()
+        self._ctx.template = template
+        self._ctx.output = output
+        self._token: ContextVar.Token[_Context] | None = None
 
     def __enter__(self) -> _Context:
         """
@@ -290,7 +298,8 @@ class render_context:  # noqa: N801
         formatters.  This enrichment ceases when :py:meth:`__exit__`
         runs.
         """
-        return _CTX
+        self._token = _CTX.set(self._ctx)
+        return self._ctx
 
     def __exit__(self, exc_type, exc, tb) -> None:  # noqa: D401
         """
@@ -314,5 +323,6 @@ class render_context:  # noqa: N801
         shared :pydata:`_CTX` object so that subsequent log messages
         are **not** tagged with stale ``template``/``output`` values.
         """
-        _CTX.template = None
-        _CTX.output = None
+        if self._token is not None:
+            _CTX.reset(self._token)
+

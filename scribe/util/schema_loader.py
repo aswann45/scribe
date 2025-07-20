@@ -62,7 +62,7 @@ _PRIMITIVES: Mapping[str, Any] = {
 
 _LIST_RE = re.compile(r"^list\[(.+)]$")
 _DICT_RE = re.compile(r"^dict\[(.+)]$")  # simplified: only Dict[str, T]
-_OPT_RE = re.compile(r"^Optional\[(.+)]$")
+_OPT_RE = re.compile(r"^optional\[(.+)]$")
 
 
 def _resolve_type(type_str: str) -> Any:
@@ -107,23 +107,24 @@ def _resolve_type(type_str: str) -> Any:
     * Nested containers are allowed, e.g. ``List[Dict[str, Decimal]]``.
     """
     type_str = type_str.strip()
+    low = type_str.lower()
 
     # primitives
-    if type_str in _PRIMITIVES:
-        return _PRIMITIVES[type_str]
+    if low in _PRIMITIVES:
+        return _PRIMITIVES[low]
 
     # Optional
-    m = _OPT_RE.match(type_str)
+    m = _OPT_RE.match(low)
     if m:
         return Optional[_resolve_type(m.group(1))]  # type: ignore[index]  # noqa: UP007
 
     # list
-    m = _LIST_RE.match(type_str)
+    m = _LIST_RE.match(low)
     if m:
         return list[_resolve_type(m.group(1))]  # type: ignore[misc]
 
     # dict
-    m = _DICT_RE.match(type_str)
+    m = _DICT_RE.match(low)
     if m:
         return dict[str, _resolve_type(m.group(1))]  # type: ignore[misc]
 

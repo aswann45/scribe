@@ -69,7 +69,9 @@ class AppSettings(BaseSettings):
 
     templates: list[TemplateConfig] = Field(default_factory=list)
     output_dir: Path = Path(__file__).parent.parent.parent / "outputs"
-    templates_dir: Path = Path(__file__).parent.parent.parent / "templates"
+    templates_dir: list[Path] = Field(
+        default=[Path(__file__).parent.parent.parent / "templates"]
+    )
     config_dir: Path = Path(__file__).parent.parent.parent / "config"
 
     # Tell pydantic-settings to look for a YAML file first, then env vars

@@ -170,7 +170,7 @@ def generate_docx(
 
     ctx: dict[str, Any]
     if isinstance(ctx_obj, BaseModel):
-        ctx = context.model_dump()  # type: ignore[union-attr]
+        ctx = ctx_obj.model_dump()
     else:
         ctx = dict(context)
 
