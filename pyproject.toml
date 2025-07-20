@@ -1,6 +1,6 @@
 [project]
 name = "scribe"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 authors = [
     {name = "Alex",email = "aswann@protonmail.com"}
@@ -28,7 +28,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-scribe = "scribe.cli.main:cli"
+scribe = "scribe.cli.main:app"
 
 
 [tool.mypy]

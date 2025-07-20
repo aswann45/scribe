@@ -1,3 +1,50 @@
+"""Top-level **Typer** application that exposes the command-line interface.
+
+Commands
+--------
+list-templates
+    Print registered templates (from `app.yaml`) or, with the `--all` flag,
+    merge them with any `.docx` files discovered on disk via
+    :class:`~scribe.core.template_finder.TemplateFinder`.
+
+discover-templates
+    Scan the template roots and write a YAML snippet for all *unregistered*
+    templates.  The resulting file can be merged back into `app.yaml`.
+
+generate
+    Render one or many documents from a data file (`YAML`, `JSON`, `CSV`,
+    `Excel`).  Supports bulk CSV/Excel generation, delimiter overrides,
+    schema validation, and rich-text styling.
+
+validate
+    Schema-validate a data file **without** rendering a document—useful in CI
+    pipelines.
+
+Global options
+--------------
+--log-level
+    One of ``DEBUG``, ``INFO`` (*default*), ``WARNING``, ``ERROR``.
+--log-json / --no-log-json
+    Toggle structured JSON logs (for log aggregation) vs. colourised
+    human-readable output.
+
+Environment variables
+---------------------
+SCRIBE_TEMPLATES_DIR
+    `os.pathsep`-separated list of template search roots (overrides
+    `AppSettings.templates_dir`).
+SCRIBE_LOG_JSON
+    Set to `1` to enable JSON logs without passing `--log-json`.
+
+Implementation notes
+--------------------
+* A **single** :class:`scribe.core.settings.AppSettings` instance is created
+  on import (module-level `settings` variable) and reused by every command.
+* The decorator :func:`scribe.cli.helpers.scribe_command` wraps each command
+  so that any :class:`scribe.core.exceptions.ScribeError` bubbles up to a
+  uniform error handler—simplifying the command bodies.
+"""
+
 import logging
 import os
 from pathlib import Path, PurePath
@@ -43,7 +90,6 @@ def list_templates(
     ] = None,
 ):
     """List available templates."""
-
     if templates_dir:
         os.environ["SCRIBE_TEMPLATES_DIR"] = (
             templates_dir  # single-run override
@@ -74,6 +120,7 @@ def discover_templates(
         ),
     ] = None,
 ) -> None:
+    """Scan template roots for *unregistered* ``.docx`` files and emit YAML."""
     if output_file is None:
         output_file = settings.config_dir / "discovered_templates.yaml"
     registered = {t.path for t in settings.templates}

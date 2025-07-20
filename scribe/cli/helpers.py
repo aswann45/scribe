@@ -107,6 +107,7 @@ def scribe_command(fn: F) -> F:
     :func:`functools.wraps` preserves the wrapped function’s signature and
     docstring so that ``--help`` output remains accurate.
     """
+
     @functools.wraps(fn)
     def _wrapper(*args, **kwargs):  # type: ignore[override]
         try:
