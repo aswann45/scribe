@@ -34,7 +34,7 @@ import json
 import logging
 import os
 import sys
-from contextvars import ContextVar
+from contextvars import ContextVar, Token
 from datetime import UTC, datetime
 from typing import Any, Final
 
@@ -274,7 +274,7 @@ class render_context:  # noqa: N801
         self._ctx = _Context()
         self._ctx.template = template
         self._ctx.output = output
-        self._token: ContextVar.Token[_Context] | None = None
+        self._token: Token[_Context] | None = None
 
     def __enter__(self) -> _Context:
         """
@@ -325,4 +325,3 @@ class render_context:  # noqa: N801
         """
         if self._token is not None:
             _CTX.reset(self._token)
-

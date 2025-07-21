@@ -152,7 +152,7 @@ class TemplateFinder:
             if env:
                 roots = (Path(p) for p in env.split(os.pathsep) if p.strip())
             else:
-                roots = [settings.templates_dir]
+                roots = settings.templates_dir
         return {Path(r).expanduser().resolve() for r in roots}
 
     def _is_ignored(self, path: Path) -> bool:

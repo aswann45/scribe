@@ -126,7 +126,7 @@ class RichTextPredicate(BaseModel):
 
     @model_validator(mode="after")
     def _not_empty(cls, v):
-        if not any(v.__dict__.values()):
+        if not any(i is not None for i in v.__dict__.values()):
             raise ValueError("At least one operator is required")
         return v
 

@@ -21,7 +21,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from scribe.core.exceptions import ConfigError
 from scribe.models.context import BaseDocContext
@@ -34,6 +34,7 @@ _SCHEMA_SUFFIXES = (".schema.yaml", ".schema.yml")
 def make_context(
     template_path: Path,
     raw_data: Mapping[str, Any] | BaseModel,
+    strict: bool = False,
 ) -> BaseModel | Mapping[str, Any]:
     """
     Produce a *validated* render context for a given template.
@@ -55,6 +56,8 @@ def make_context(
 
         * a *mapping* (``dict`` or ``pydantic-compatible`` mapping) or
         * an already-constructed :class:`pydantic.BaseModel`.
+    strict:
+        Whether to allow extra fields on the generated model.
 
     Returns
     -------
@@ -78,9 +81,19 @@ def make_context(
         schema = template_path.with_suffix(suf)
         if schema.exists():
             try:
-                Model = build_model(schema, base=BaseDocContext)
+                if strict is True:
+
+                    class StrictModel(BaseModel):
+                        model_config = ConfigDict(extra="forbid")
+
+                    Model = build_model(schema, base=StrictModel)
+                    print("strict model")
+                else:
+                    Model = build_model(schema, base=BaseDocContext)
+                    print("relaxed model")
+                print("model:", Model.model_fields)
                 return Model.model_validate(raw_data)
-            except Exception as exc:
+            except ValidationError as exc:
                 raise ConfigError(
                     f"Schema validation failed for {schema}"
                 ) from exc

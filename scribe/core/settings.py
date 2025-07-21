@@ -76,7 +76,7 @@ class AppSettings(BaseSettings):
 
     # Tell pydantic-settings to look for a YAML file first, then env vars
     model_config = SettingsConfigDict(
-        env_prefix="SCRIBE_",  # e.g. SCRIBE_DEFAULT_OUTPUT_DIR
+        env_prefix="SCRIBE_",  # e.g. SCRIBE_OUTPUT_DIR
         yaml_file=config_dir / "app.yaml",
         validate_default=True,
     )
@@ -140,7 +140,3 @@ def get_settings() -> AppSettings:
         return AppSettings()
     except ValidationError as ve:
         raise ConfigError("Invalid app configuration.") from ve
-
-
-if __name__ == "__main__":
-    print(AppSettings().model_dump_json(indent=2))

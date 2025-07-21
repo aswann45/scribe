@@ -80,6 +80,7 @@ def _style_for_value(
     for rule in rule_set:
         if rule.when.matches(value):
             return rule.style
+
     return None
 
 

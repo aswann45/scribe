@@ -61,7 +61,7 @@ _PRIMITIVES: Mapping[str, Any] = {
 }
 
 _LIST_RE = re.compile(r"^list\[(.+)]$")
-_DICT_RE = re.compile(r"^dict\[(.+)]$")  # simplified: only Dict[str, T]
+_DICT_RE = re.compile(r"^dict\[(.+), (.+)]$")  # simplified: only Dict[str, T]
 _OPT_RE = re.compile(r"^optional\[(.+)]$")
 
 
@@ -126,7 +126,7 @@ def _resolve_type(type_str: str) -> Any:
     # dict
     m = _DICT_RE.match(low)
     if m:
-        return dict[str, _resolve_type(m.group(1))]  # type: ignore[misc]
+        return dict[str, _resolve_type(m.group(2))]  # type: ignore[misc]
 
     # Custom model path "package.module:Class"
     if ":" in type_str:
@@ -205,7 +205,7 @@ def build_model(
     }
 
     return create_model(
-        schema_path.stem + "Ctx",  # ← model name
+        schema_path.stem.replace(".schema", "") + "Ctx",  # ← model name
         __base__=base,  # ← keyword, not positional
         **fields,  # ← field definitions
     )
