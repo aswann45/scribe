@@ -5,14 +5,19 @@ set -e
 cd "$(dirname "$0")"/../
 
 echo "Runnning mypy checks..."
+echo "Checking application code."
 mypy scribe
 
-echo "Running vulture checks..."
-vulture scribe
+echo "Checking tests."
+mypy tests
 
 echo "Runnning ruff checks..."
+echo "Checking application code."
 ruff check scribe --ignore ERA001 --ignore FIX002
-# ruff check app
 ruff format scribe --check
+
+echo "Checking tests."
+ruff check tests --ignore ERA001 --ignore FIX002
+ruff format tests --check
 
 echo "Linting checks done!"
