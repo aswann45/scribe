@@ -27,7 +27,7 @@ def test_csv_delimiters(tmp_path: Path, delim: str) -> None:
     """Any single-character delimiter round-trips to list[dict]."""
     csv = tmp_path / "file.csv"
     _csv(csv, delim)
-    rows: list[dict[str, Any]] = DataLoader.load(csv, delimiter=delim)
+    rows: list[dict[str, Any]] = DataLoader.load(csv, delimiter=delim)  # type: ignore[assignment]
     assert len(rows) == 2 and rows[0]["a"] == 1
 
 
@@ -107,7 +107,7 @@ def test_tabular_read_error_raises_dataloaderror(
     csv = tmp_path / "boom.csv"
     _write_csv(csv)
 
-    def boom(*_a, **_kw):  # noqa: D401 ANN001
+    def boom(*_a: Any, **_kw: Any) -> None:
         raise pd.errors.ParserError("parse fail")
 
     monkeypatch.setattr(pd, "read_csv", boom)

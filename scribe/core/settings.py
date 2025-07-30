@@ -1,18 +1,18 @@
 """
 Configuration layer for *scribe* built on **pydantic-settings v2**.
 
-The module exposes one public helper – :func:`get_settings` – which returns a
+The module exposes one public helper - :func:`get_settings` - which returns a
 *singleton* instance of :class:`AppSettings`.  All other parts of the codebase
 (e.g. CLI, batch jobs, notebooks) **import the helper**, not the class, so that
 configuration is parsed exactly once per interpreter session.
 
 Key features
 ------------
-* **Multi-source loading** – YAML → ``.env`` → environment variables →
+* **Multi-source loading** - YAML → ``.env`` → environment variables →
   explicit kwargs; implemented via
   :meth:`AppSettings.settings_customise_sources`.
-* **Caching** – :func:`functools.lru_cache` guarantees a single in-memory copy.
-* **Runtime safety** – any validation error is wrapped in
+* **Caching** - :func:`functools.lru_cache` guarantees a single in-memory copy.
+* **Runtime safety** - any validation error is wrapped in
   :class:`scribe.core.exceptions.ConfigError`, giving the CLI a predictable
   exit code.
 """
@@ -53,10 +53,10 @@ class AppSettings(BaseSettings):
     Model config
     ------------
     ``model_config = SettingsConfigDict(...)`` sets
-    * ``env_prefix="SCRIBE_"`` – environment variables are written in
+    * ``env_prefix="SCRIBE_"`` - environment variables are written in
       screaming-snake case (e.g. ``SCRIBE_OUTPUT_DIR``).
-    * ``yaml_file=config_dir / "app.yaml"`` – the first, optional source.
-    * ``validate_default=True`` – run field validators on defaults too.
+    * ``yaml_file=config_dir / "app.yaml"`` - the first, optional source.
+    * ``validate_default=True`` - run field validators on defaults too.
 
     Notes
     -----
@@ -89,17 +89,17 @@ class AppSettings(BaseSettings):
         env_settings: PydanticBaseSettingsSource,
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
-    ):
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
         """
         Re-order the default *pydantic-settings* source chain.
 
         The final precedence becomes (highest → lowest):
 
-        1. **Init settings** – explicit keyword arguments.
-        2. **Environment variables** – ``SCRIBE_*``.
-        3. **Dotenv file** – ``.env`` in the CWD, if present.
-        4. **YAML file** – the path given in ``model_config.yaml_file``.
-        5. **File secrets** – Kubernetes-style ``/var/run/secrets`` mounts.
+        1. **Init settings** - explicit keyword arguments.
+        2. **Environment variables** - ``SCRIBE_*``.
+        3. **Dotenv file** - ``.env`` in the CWD, if present.
+        4. **YAML file** - the path given in ``model_config.yaml_file``.
+        5. **File secrets** - Kubernetes-style ``/var/run/secrets`` mounts.
 
         Returning the tuple in this order allows YAML to act as a *base*
         config while still letting environment variables override values in
@@ -134,7 +134,7 @@ def get_settings() -> AppSettings:
     * The function uses :pyfunc:`functools.lru_cache` with default settings
       (single slot) so repeated imports incur zero overhead.
     * Calling code **should not** catch :class:`pydantic.ValidationError`
-      directly – always import and handle :class:`ConfigError` instead.
+      directly - always import and handle :class:`ConfigError` instead.
     """
     try:
         return AppSettings()

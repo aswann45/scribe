@@ -1,12 +1,12 @@
 """
 Utilities shared by all Typer CLI commands.
 
-* **`_handle_error`** – Centralised mapping from
+* **`_handle_error`** - Centralised mapping from
   :class:`scribe.core.exceptions.ScribeError` sub-classes → numeric exit
   codes.  Emits a structured log line **and** a user-facing message before
   delegating to :class:`typer.Exit`.
 
-* **`scribe_command`** – Decorator that wraps any CLI function, guaranteeing
+* **`scribe_command`** - Decorator that wraps any CLI function, guaranteeing
   that unhandled *ScribeError*s are caught by :func:`_handle_error`.  Keeps
   individual command bodies free from repetitive ``try/except`` boiler-plate.
 
@@ -20,7 +20,7 @@ from scribe.cli.helpers import scribe_command
 import functools
 import logging
 from collections.abc import Callable
-from typing import TypeVar
+from typing import Any, TypeVar
 
 import typer
 
@@ -59,7 +59,7 @@ def _handle_error(exc: ScribeError) -> None:
 
     Notes
     -----
-    Unknown subclasses (edge-cases) default to exit-code ``1`` – matching
+    Unknown subclasses (edge-cases) default to exit-code ``1`` - matching
     conventional *Unix* “generic error” semantics.
     """
     code = EXIT_CODES.get(type(exc), 1)
@@ -104,12 +104,12 @@ def scribe_command(fn: F) -> F:
 
     Implementation Detail
     ---------------------
-    :func:`functools.wraps` preserves the wrapped function’s signature and
+    :func:`functools.wraps` preserves the wrapped function's signature and
     docstring so that ``--help`` output remains accurate.
     """
 
     @functools.wraps(fn)
-    def _wrapper(*args, **kwargs):  # type: ignore[override]
+    def _wrapper(*args: Any, **kwargs: Any) -> object:
         try:
             return fn(*args, **kwargs)
         except ScribeError as exc:

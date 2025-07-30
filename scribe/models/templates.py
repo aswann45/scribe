@@ -3,12 +3,12 @@
 Typed building-blocks that describe **how each DOCX template should be
 rendered**.  The models here capture three ideas:
 
-1. :class:`RichTextStyle` – low-level font/colour attributes that map onto
-   *docxtpl*’s ``RichText`` API.
-2. :class:`RichTextPredicate` + :class:`ConditionalRichText` – a declarative
+1. :class:`RichTextStyle` - low-level font/colour attributes that map onto
+   *docxtpl*'s ``RichText`` API.
+2. :class:`RichTextPredicate` + :class:`ConditionalRichText` - a declarative
    *if-this-value-then-that-style* DSL that lets non-developers apply styles
    based on the *content* of a placeholder.
-3. :class:`TemplateConfig` – top-level metadata (file path, output-naming
+3. :class:`TemplateConfig` - top-level metadata (file path, output-naming
    rules, global options) consumed by the generator.
 
 These models are referenced by **YAML config files** and by dynamic schema
@@ -40,9 +40,9 @@ class RichTextStyle(BaseModel):
     Parameters
     ----------
     bold, italic, subscript, superscript, strike : bool, optional
-        Toggle Word’s corresponding character formatting.
+        Toggle Word's corresponding character formatting.
     underline : TUnderline | None, optional
-        One of Word’s named underline styles (``"single"``, ``"double"``,
+        One of Word's named underline styles (``"single"``, ``"double"``,
         ``"thick"``, ``"dotted"``, etc.).  ``None`` ⇒ no underline.
     color, higlight : str | None, optional
         Six-digit **hex RGB** string *without* the ``"#"`` prefix,
@@ -50,7 +50,7 @@ class RichTextStyle(BaseModel):
         ``higlight`` sets background highlight.
     size : int | None, optional
         Font size in **half-points** (``22`` → 11 pt).  ``None`` keeps the
-        template’s default size.
+        template's default size.
     font : str | None, optional
         Font family name as recognised by Word (e.g., ``"Calibri"``).
     style : str | None, optional
@@ -60,7 +60,7 @@ class RichTextStyle(BaseModel):
     -----
     * Extra attributes are **forbidden** to prevent silent typos
       (``model_config.extra = "forbid"``).
-    * When multiple style attributes conflict, Word’s precedence rules apply.
+    * When multiple style attributes conflict, Word's precedence rules apply.
     """
 
     bold: bool = False
@@ -109,7 +109,7 @@ class RichTextPredicate(BaseModel):
     Parameters
     ----------
     equals, contains, regex : str | None
-        Equality / substring / *re* search against the placeholder’s
+        Equality / substring / *re* search against the placeholder's
         *string* representation.
     gt, gte, lt, lte : float | None
         Numeric comparisons.  The placeholder value is coerced to
@@ -125,12 +125,12 @@ class RichTextPredicate(BaseModel):
     lte: float | None = None
 
     @model_validator(mode="after")
-    def _not_empty(cls, v):
+    def _not_empty(cls, v: Any) -> Any:
         if not any(i is not None for i in v.__dict__.values()):
             raise ValueError("At least one operator is required")
         return v
 
-    def matches(self, value: Any) -> bool:  # noqa: D401
+    def matches(self, value: Any) -> bool:
         """Return *True* when **value** satisfies the predicate."""
         try:
             if (
@@ -198,7 +198,7 @@ class TemplateOption(BaseModel):
     breaking schema change.
     """
 
-    # Example flags – add your own as needed
+    # Example flags - add your own as needed
     date_format: str | None = None
     uppercase_names: bool = False
     richtext: dict[str, RichTextStyle | list[ConditionalRichText]] = Field(
@@ -245,7 +245,7 @@ class TemplateConfig(BaseModel):
         ...,
         description=(
             "Python format string (f-string-style) evaluated against the "
-            "render context – e.g. '{client_name}_report.docx'"
+            "render context - e.g. '{client_name}_report.docx'"
         ),
     )
     options: TemplateOption = TemplateOption()  # sensible defaults

@@ -1,5 +1,5 @@
 """
-Public re-export hub for the project’s Pydantic *data models*.
+Public re-export hub for the project's Pydantic *data models*.
 
 Why this file exists
 --------------------
@@ -17,9 +17,9 @@ can write concise, uniform imports:
 
 Re-exported API
 ---------------
-* :class:`BaseDocContext` – permissive parent for template contexts
-* :class:`ConditionalRichText`, :class:`RichTextStyle` – rich-text DSL
-* :class:`TemplateConfig`, :class:`TemplateOption` – per-template metadata
+* :class:`BaseDocContext` - permissive parent for template contexts
+* :class:`ConditionalRichText`, :class:`RichTextStyle` - rich-text DSL
+* :class:`TemplateConfig`, :class:`TemplateOption` - per-template metadata
 
 The list is enforced by ``__all__`` to prevent **accidental namespace
 pollution** and to make ``from scribe.models import *`` predictable.

@@ -36,13 +36,13 @@ class BaseDocContext(BaseModel):
     Parameters
     ----------
     **data
-        Arbitrary key–value pairs representing template placeholders and
+        Arbitrary key-value pairs representing template placeholders and
         their corresponding values.
 
     Model behaviour
     ---------------
     * ``extra = "allow"`` — **all** unknown fields are accepted without
-      validation; they are stored unchanged in the model’s `__dict__`.
+      validation; they are stored unchanged in the model's `__dict__`.
     * Type coercion still applies when you *do* declare fields in a
       subclass (e.g. strings → ``date``), so you can mix strict and loose
       placeholders seamlessly.

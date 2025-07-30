@@ -23,7 +23,7 @@ converts every type string into an actual Python / typing object via
 
 calls :pyfunc:build_model (a thin wrapper around
 :pyfunc:pydantic.create_model) to yield a dynamically generated
-subclass of the project’s :pyclass:BaseDocContext.
+subclass of the project's :pyclass:BaseDocContext.
 
 The generated model is then used by :pymod:scribe.context_factory to
 validate the raw payload and coerce primitive types (e.g. strings → date)
@@ -71,9 +71,9 @@ def _resolve_type(type_str: str) -> Any:
 
     The supported grammar is intentionally small yet expressive:
 
-    * **Primitive aliases** – ``str``, ``int``, ``float``, ``bool``,
+    * **Primitive aliases** - ``str``, ``int``, ``float``, ``bool``,
       ``date``, ``datetime``, ``Decimal``.
-    * **Container forms** – ``List[T]`` / ``Dict[str, T]`` /
+    * **Container forms** - ``List[T]`` / ``Dict[str, T]`` /
       ``Optional[T]`` (case-insensitive; square brackets required).
     * **Custom models**
 
@@ -116,7 +116,7 @@ def _resolve_type(type_str: str) -> Any:
     # Optional
     m = _OPT_RE.match(low)
     if m:
-        return Optional[_resolve_type(m.group(1))]  # type: ignore[index]  # noqa: UP007
+        return Optional[_resolve_type(m.group(1))]  # noqa: UP007
 
     # list
     m = _LIST_RE.match(low)
@@ -178,7 +178,7 @@ def build_model(
     schema_path
         Absolute path to the ``*.schema.yaml`` file.
     base
-        Base class to inherit from – typically
+        Base class to inherit from - typically
         :pyclass:`scribe.models.contexts.BaseDocContext`.  Allows the
         generated model to share common config (e.g. ``extra="forbid"``).
 

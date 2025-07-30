@@ -2,16 +2,16 @@
 
 A compact **stdout / stderr** logging helper that offers:
 
-* **Two wire‑formats**
-  * *Developer* ‒ human‑readable, ANSI‑colourised single line per record
-  * *JSON* ‒ structured one‑line payload for ingestion by log systems
-* **Context enrichment** – every log produced inside
+* **Two wire-formats**
+  * *Developer* - human-readable, ANSI-colourised single line per record
+  * *JSON* - structured one-line payload for ingestion by log systems
+* **Context enrichment** - every log produced inside
   :pyclass:`render_context` automatically gains ``template`` and ``output``
-  fields so multi‑file batch runs are easy to debug.
-* **Single entry‑point** – :pyfunc:`setup` configures the *root* logger
+  fields so multi-file batch runs are easy to debug.
+* **Single entry-point** - :pyfunc:`setup` configures the *root* logger
   exactly once.  All other modules simply ``import logging`` and write.
 
-The helper is purposely *dependency‑free* beyond the Python standard library.
+The helper is purposely *dependency-free* beyond the Python standard library.
 
 Examples
 --------
@@ -24,7 +24,7 @@ Examples
 Environment variables
 ---------------------
 ``SCRIBE_LOG_JSON``
-    When set to **non‑empty**, :pyfunc:`setup` defaults to JSON format even if
+    When set to **non-empty**, :pyfunc:`setup` defaults to JSON format even if
     *json_mode* is not passed explicitly.
 """
 
@@ -52,7 +52,7 @@ _DEV_DATEFMT: Final[str] = "%H:%M:%S"
 
 
 class _JSONFormatter(logging.Formatter):
-    """Serialize :pyclass:`logging.LogRecord` as **one‑line JSON**.
+    """Serialize :pyclass:`logging.LogRecord` as **one-line JSON**.
 
     Extra attributes ``template`` and ``output`` (injected by the record
     factory) are included when present, making downstream filtering painless.
@@ -70,7 +70,7 @@ class _JSONFormatter(logging.Formatter):
         Returns
         -------
         str
-            An RFC-3339–timestamped JSON object containing the canonical keys
+            An RFC-3339-timestamped JSON object containing the canonical keys
             ``ts``, ``lvl``, ``msg``, ``mod``, ``fn``, and ``line``.
             The optional enrichment keys ``template`` and ``output`` are
             included when present in *record* (they are injected by
@@ -111,10 +111,10 @@ def _colour(level: int, text: str) -> str:
     Parameters
     ----------
     level
-        Numeric log‑level as understood by :pymod:`logging` (e.g. 20 for
+        Numeric log-level as understood by :pymod:`logging` (e.g. 20 for
         ``logging.INFO``).
     text
-        The already‑formatted level‑name to wrap.
+        The already-formatted level-name to wrap.
 
     Returns
     -------
@@ -152,7 +152,7 @@ class _DevFormatter(logging.Formatter):
         → outputs/Acme.docx | Rendering finished``
     """
 
-    def format(self, record: logging.LogRecord) -> str:  # noqa: D401
+    def format(self, record: logging.LogRecord) -> str:
         record.levelname = _colour(record.levelno, record.levelname)
         # Display template/output if present
         record.template = (
@@ -176,7 +176,7 @@ def setup(level: str | int = "INFO", json_mode: bool | None = None) -> None:
     Parameters
     ----------
     level
-        Default log‑level for *root* logger.  May be a string ("DEBUG") or the
+        Default log-level for *root* logger.  May be a string ("DEBUG") or the
         corresponding integer constant (e.g. ``logging.DEBUG``).
     json_mode
         When *True*, force JSON formatting; when *False*, force developer
@@ -186,7 +186,7 @@ def setup(level: str | int = "INFO", json_mode: bool | None = None) -> None:
     Notes
     -----
     The function **overwrites** existing handlers on the root logger.  Call
-    this early in application start‑up.
+    this early in application start-up.
     """
     if getattr(setup, "_configured", False):  # pragma: no cover
         return
@@ -243,7 +243,7 @@ class _Context:
     complexity of thread-locals or explicit locks.
     """
 
-    __slots__ = ("template", "output")
+    __slots__ = ("output", "template")
     template: str | None
     output: str | None
 
@@ -251,8 +251,8 @@ class _Context:
 _CTX: ContextVar[_Context] = ContextVar("_CTX")
 
 
-class render_context:  # noqa: N801
-    """Context‑manager that enriches logs inside its ``with`` block.
+class render_context:
+    """Context-manager that enriches logs inside its ``with`` block.
 
     Parameters
     ----------
@@ -301,7 +301,9 @@ class render_context:  # noqa: N801
         self._token = _CTX.set(self._ctx)
         return self._ctx
 
-    def __exit__(self, exc_type, exc, tb) -> None:  # noqa: D401
+    def __exit__(
+        self, exc_type: type | None, exc: Exception | None, tb: str | None
+    ) -> None:
         """
         Deactivate the render context and clean up state.
 

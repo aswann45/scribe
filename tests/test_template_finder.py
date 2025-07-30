@@ -57,7 +57,7 @@ def test_env_var_multiple_roots(
 
 def test_ignore_and_not_ignore(tmp_path: Path) -> None:
     """
-    Verify that default ignore patterns skip Office lock files AND allow normal files.
+    Verify default ignore pattern skip Office lock file AND allow normal files.
 
     Exercises _is_ignored True/False paths (≈151-155).
     """
@@ -71,14 +71,14 @@ def test_ignore_and_not_ignore(tmp_path: Path) -> None:
 
     ignored: set[str] = {
         p.name for p in finder._roots.pop().iterdir() if finder._is_ignored(p)
-    }  # type: ignore[attr-defined]  # private access only in test
+    }
     assert "~$lock.docx" in ignored
     assert "ok.docx" not in ignored
 
 
 def test_non_directory_root(tmp_path: Path) -> None:
     """
-    If a supplied *root* path is a **file**, discover_paths should silently skip it.
+    If a supplied root path is a file, discover_paths should silently skip it.
 
     Triggers line ≈126 (continue on non-dir).
     """

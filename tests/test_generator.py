@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from docxtpl import DocxTemplate
+from docxtpl import DocxTemplate  # type: ignore[import-untyped]
 
 from scribe.core import RenderError
 from scribe.core.generator import generate_docx
@@ -63,11 +63,11 @@ def test_generate_docx_with_mapping(tmp_path: Path) -> None:
     )
 
     # Monkey-patch render/save so we don't depend on real Word XML
-    def noop_render(self: DocxTemplate, ctx: dict[str, Any]) -> None: ...
+    def noop_render(self: DocxTemplate, ctx: dict[str, Any]) -> None: ...  # type: ignore[no-any-unimported]
 
-    def noop_save(self: DocxTemplate, where: Path | str) -> None: ...
+    def noop_save(self: DocxTemplate, where: Path | str) -> None: ...  # type: ignore[no-any-unimported]
 
-    DocxTemplate.render, DocxTemplate.save = noop_render, noop_save  # type: ignore[assignment]
+    DocxTemplate.render, DocxTemplate.save = noop_render, noop_save
 
     out = generate_docx({"status": "OK"}, cfg, tmp_path)
     assert out.name == "map.docx" and out.exists()
@@ -81,10 +81,10 @@ def test_generate_docx_raises_render_error(tmp_path: Path) -> None:
     cfg = TemplateConfig(name="boom", path=tpl, output_naming="boom.docx")
 
     # Patch render to raise; save is never reached
-    def boom(self: DocxTemplate, ctx):  # noqa: ANN001
+    def boom(self: DocxTemplate, ctx: Any) -> None:  # type: ignore[no-any-unimported]
         raise RuntimeError("💥")
 
-    DocxTemplate.render = boom  # type: ignore[assignment]
+    DocxTemplate.render = boom
 
     with pytest.raises(RenderError):
         generate_docx({"x": 1}, cfg, tmp_path)
