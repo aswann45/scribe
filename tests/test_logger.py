@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import logging
+from typing import Any
 
 import pytest
 
@@ -49,7 +50,7 @@ def test_setup_selects_correct_formatter(
     """SCRIBE_LOG_JSON env-var drives formatter choice."""
     orig_basic = logging.basicConfig
 
-    def basic_force(*args, **kwargs):  # noqa: D401 ANN001
+    def basic_force(*args: Any, **kwargs: Any) -> None:
         kwargs["force"] = True
         return orig_basic(*args, **kwargs)
 
@@ -131,7 +132,7 @@ def test_setup_idempotent() -> None:
     log_setup(level="INFO", json_mode=True)
     first_handler = logging.root.handlers[0]
 
-    log_setup(level="DEBUG", json_mode=False)  # params shouldn’t matter
+    log_setup(level="DEBUG", json_mode=False)  # params shouldn't matter
     assert logging.root.handlers[0] is first_handler  # no new handler added
     assert isinstance(first_handler.formatter, _JSONFormatter)
 
@@ -147,7 +148,9 @@ def test_setup_idempotent() -> None:
         (99_999, 37),  # default branch: unknown level → code 37
     ],
 )
-def test_colour_palette(level: int, expected_code: int, monkeypatch) -> None:
+def test_colour_palette(
+    level: int, expected_code: int, monkeypatch: Any
+) -> None:
     """
     Ensure _colour() wraps text with the palette-selected ANSI code.
 
@@ -165,7 +168,7 @@ def test_colour_palette(level: int, expected_code: int, monkeypatch) -> None:
     assert rest == f"{txt}\x1b[0m"
 
 
-def test_record_factory_no_active_context(monkeypatch) -> None:
+def test_record_factory_no_active_context(monkeypatch: Any) -> None:
     """When *no* render_context is active the LogRecord must be empty."""
     # --- Ensure clean logging root + force re-configure -------------
     logging.root.handlers.clear()
@@ -175,7 +178,7 @@ def test_record_factory_no_active_context(monkeypatch) -> None:
     # patch basicConfig to always reconfigure (force=True)
     orig_basic = logging.basicConfig
 
-    def basic_force(*args, **kwargs):  # noqa: ANN001 D401
+    def basic_force(*args: Any, **kwargs: Any) -> None:
         kwargs["force"] = True
         return orig_basic(*args, **kwargs)
 

@@ -16,8 +16,8 @@ def test_optional_case_insensitive(tmp_path: Path) -> None:
     """Ensure Optional[...] parsing matches docstring (case-insensitive)."""
     sch = tmp_path / "foo.schema.yaml"
     sch.write_text("value: Optional[int]")
-    Model = build_model(sch, base=BaseDocContext)  # type: ignore[arg-type]
-    assert Model(value=42).value == 42
+    Model = build_model(sch, base=BaseDocContext)
+    assert Model(value=42).value == 42  # type: ignore[attr-defined]
     with pytest.raises(ValidationError):
         Model()  # required
 
@@ -26,7 +26,7 @@ def _build(schema_text: str, tmp_path: Path) -> type[BaseModel]:
     """Write *schema_text* and call build_model()."""
     sch = tmp_path / "foo.schema.yaml"
     sch.write_text(schema_text)
-    return build_model(sch, base=BaseModel)  # type: ignore[arg-type]
+    return build_model(sch, base=BaseModel)
 
 
 def test_explicit_module_path(tmp_path: Path) -> None:
@@ -37,7 +37,7 @@ def test_explicit_module_path(tmp_path: Path) -> None:
     """
     Model = _build("line: scribe.models.custom:Detail", tmp_path)
     obj = Model(line={"item": "A", "value": "1.0"})  # Detail coercion
-    assert isinstance(obj.line, Detail)
+    assert isinstance(obj.line, Detail)  # type: ignore[attr-defined]
 
 
 def test_implicit_custom_model(tmp_path: Path) -> None:
@@ -48,14 +48,14 @@ def test_implicit_custom_model(tmp_path: Path) -> None:
     """
     Model = _build("line: Detail", tmp_path)
     obj = Model(line={"item": "B", "value": "2.0"})
-    assert isinstance(obj.line, Detail)
+    assert isinstance(obj.line, Detail)  # type: ignore[attr-defined]
 
 
 def _schema(path: Path, text: str) -> type[BaseModel]:
     """Write *text* to a `.schema.yaml` file next to *path* and build model."""
     sch = path.with_suffix(".schema.yaml")
     sch.write_text(text)
-    return build_model(sch, base=BaseModel)  # type: ignore[arg-type]
+    return build_model(sch, base=BaseModel)
 
 
 def test_list_container(tmp_path: Path) -> None:
@@ -68,10 +68,10 @@ def test_list_container(tmp_path: Path) -> None:
     tpl.write_bytes(b"PK\x05\x06" + b"\x00" * 18)  # dummy docx
 
     Model = _schema(tpl, "numbers: list[int]")
-    assert Model(numbers=[1, 2]).numbers == [1, 2]
+    assert Model(numbers=[1, 2]).numbers == [1, 2]  # type: ignore[attr-defined]
 
     try:
-        Model(numbers="bad")  # type: ignore[arg-type]
+        Model(numbers="bad")
     except Exception:
         pass
 
@@ -82,5 +82,5 @@ def test_dict_container(tmp_path: Path) -> None:
     tpl.write_bytes(b"PK\x05\x06" + b"\x00" * 18)
 
     Model = _schema(tpl, "scores: dict[str, int]")
-    data = Model(scores={"alice": 5, "bob": 7}).scores
+    data = Model(scores={"alice": 5, "bob": 7}).scores  # type: ignore[attr-defined]
     assert isinstance(data, dict) and data["alice"] == 5

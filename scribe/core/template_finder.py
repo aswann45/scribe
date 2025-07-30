@@ -2,11 +2,11 @@
 
 The class :class:`TemplateFinder` supports three main workflows:
 
-1.  **Discovery** – enumerate every template file under one or more *roots*,
+1.  **Discovery** - enumerate every template file under one or more *roots*,
     applying ignore patterns for lock-files or hidden directories.
-2.  **Path-only view** – return a sorted list of :class:`pathlib.Path`
+2.  **Path-only view** - return a sorted list of :class:`pathlib.Path`
     objects for quick checks (``discover_paths``).
-3.  **Metadata view** – return fully populated
+3.  **Metadata view** - return fully populated
     :class:`~scribe.core.settings.TemplateConfig` objects so higher-level
     code can merge *discovered* templates with those registered in YAML.
 
@@ -49,15 +49,15 @@ class TemplateFinder:
         One or more root directories to scan.  *None* (default) triggers the
         precedence chain:
 
-        1. ``SCRIBE_TEMPLATES_DIR`` – split on ``os.pathsep``.
+        1. ``SCRIBE_TEMPLATES_DIR`` - split on ``os.pathsep``.
         2. :pyattr:`scribe.core.settings.AppSettings.templates_dir`.
 
         Each path is ``~``-expanded and resolved to an absolute path.
     ignore : Sequence[re.Pattern] | None, optional
-        Regex patterns; if *any* matches the candidate path’s **full POSIX
+        Regex patterns; if *any* matches the candidate path's **full POSIX
         string**, that file is skipped.  Defaults to:
 
-        * ``~$*.docx`` – Office lock files
+        * ``~$*.docx`` - Office lock files
         * anything under a hidden directory (``.git/``, ``.idea/`` …)
 
     Notes
@@ -89,9 +89,9 @@ class TemplateFinder:
         Every path returned by :meth:`discover_paths` is wrapped in a
         ``TemplateConfig`` with:
 
-        * ``name`` – stem of the filename
-        * ``output_naming`` – ``"<stem>.docx"`` sensible default
-        * ``options`` – empty :class:`scribe.models.TemplateOption`
+        * ``name`` - stem of the filename
+        * ``output_naming`` - ``"<stem>.docx"`` sensible default
+        * ``options`` - empty :class:`scribe.models.TemplateOption`
 
         Returns
         -------

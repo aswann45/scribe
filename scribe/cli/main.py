@@ -88,7 +88,7 @@ def list_templates(
             help="Override template root; same syntax as $SCRIBE_TEMPLATES_DIR"
         ),
     ] = None,
-):
+) -> None:
     """List available templates."""
     if templates_dir:
         os.environ["SCRIBE_TEMPLATES_DIR"] = (
@@ -233,7 +233,7 @@ def validate(
     delimiter: Annotated[
         str, typer.Option(help="CSV delimiter (ignored for YAML/JSON/Excel)..")
     ] = ",",
-):
+) -> None:
     """Validate data against the schema."""
     ctx = DataLoader.load(data_file, as_records=True, delimiter=delimiter)
     if isinstance(ctx, list):

@@ -43,7 +43,7 @@ TRichTextOptionMap = Mapping[
 """
 Typing alias used by :pyfunc:`scribe.core.generator._style_for_value`.
 
-Key–value mapping where:
+Key-value mapping where:
 
 * **Key** → the Jinja placeholder name inside the DOCX template.
 * **Value** → either

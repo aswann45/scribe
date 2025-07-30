@@ -28,7 +28,7 @@ from pydantic import BaseModel
 
 class Detail(BaseModel):
     """
-    A single key–value line item used in many financial-style templates.
+    A single key-value line item used in many financial-style templates.
 
     Parameters
     ----------

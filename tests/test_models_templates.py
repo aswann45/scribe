@@ -37,8 +37,8 @@ def test_not_empty_validator() -> None:
     ],
 )
 def test_numeric_branches(
-    pred: RichTextPredicate, value, expect: bool
-) -> None:  # noqa: ANN001
+    pred: RichTextPredicate, value: str | int | float, expect: bool
+) -> None:
     """Every numeric operator path returns the proper boolean."""
     assert pred.matches(value) is expect
 
@@ -53,7 +53,7 @@ def test_numeric_branches(
     ids=["text_lower_true", "text_contains_true", "regex_true"],
 )
 def test_string_comparisons(
-    pred: RichTextPredicate, value, expect: bool
+    pred: RichTextPredicate, value: str, expect: bool
 ) -> None:
     """String comparison is case-insensitive (earlier branch)."""
     assert pred.matches(value) is expect

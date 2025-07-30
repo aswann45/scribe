@@ -5,12 +5,12 @@ High-level “orchestrator” that turns a fully-validated context plus a
 :class:`~scribe.core.settings.TemplateConfig` object into a finished **DOCX**
 file.  The steps are:
 
-1.  **Schema validation** – :func:`scribe.core.context_factory.make_context`
+1.  **Schema validation** - :func:`scribe.core.context_factory.make_context`
     enforces (or bypasses) a side-car YAML schema.
-2.  **Rich-text post-processing** – :func:`_apply_richtext` converts selected
+2.  **Rich-text post-processing** - :func:`_apply_richtext` converts selected
     placeholder values into ``docxtpl.RichText`` objects according to the
     declarative rules stored in ``TemplateConfig.options.richtext``.
-3.  **Rendering** – Feed the context to *docxtpl*, save the file, and emit
+3.  **Rendering** - Feed the context to *docxtpl*, save the file, and emit
     structured log messages via :pyfunc:`scribe.util.logger.render_context`.
 
 Any template-specific logic (uppercase flags, conditional styling, etc.)
@@ -76,7 +76,7 @@ def _style_for_value(
     if isinstance(rule_set, RichTextStyle):
         return rule_set
 
-    # Iterate over conditional list – first match wins
+    # Iterate over conditional list - first match wins
     for rule in rule_set:
         if rule.when.matches(value):
             return rule.style
