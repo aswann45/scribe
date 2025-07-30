@@ -1,6 +1,6 @@
 [project]
 name = "scribe-templates"
-version = "0.3.0"
+version = "0.3.1"
 description = "Rapid DOCX generation from Jinja2 templates – YAML + pydantic + Typer."
 authors = [
     {name = "Alex"}
